@@ -1,0 +1,47 @@
+﻿@page "/pizzalist"
+@using PizzaPromo.Web.Shared;
+@inject HttpClient Http
+
+<PageTitle>Pizzas</PageTitle>
+
+<h1>Pizzas</h1>
+
+@if (ofertas is null)
+{
+        <p><em>Loading...</em></p>
+}
+else
+{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Pizzaria</th>
+                    <th>Descrição</th>
+                    <th>Pizzas</th>
+                    <th>Valor</th>
+                    <th>Area por valor</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var oferta in ofertas)
+            {
+                        <tr>
+                            <td>@oferta.Pizzaria.Nome</td>
+                            <td>@oferta.Descricao</td>
+                            <td>@oferta.Pizzas.ToString()</td>
+                            <td>@oferta.Valor.ToString("C")</td>
+                            <td>@string.Format("{0} cm²/BRL", Math.Round(oferta.AreaPorValor, 2))</td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+
+@code {
+    private OfertaPizza[]? ofertas;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ofertas = await Http.GetFromJsonAsync<OfertaPizza[]>("Pizzas");
+    }
+}
